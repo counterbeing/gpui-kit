@@ -4,6 +4,7 @@ use gpui::{
     App, ClipboardItem, ElementId, IntoElement, RenderOnce, SharedString, Window,
     prelude::FluentBuilder,
 };
+use rust_i18n::t;
 
 use crate::{
     IconName, Sizable, Size,
@@ -49,7 +50,7 @@ impl Clipboard {
         self
     }
 
-    /// Set the name a screen reader announces.
+    /// Set the name a screen reader announces. Defaults to the localized "Copy".
     ///
     /// The clipboard button shows only an icon, so it has no visible label to
     /// read, and its tooltip is a hint rather than a name.
@@ -103,9 +104,10 @@ impl RenderOnce for Clipboard {
             .ghost()
             .with_size(self.size)
             .when_some(self.tooltip_text, |this, text| this.tooltip(text))
-            .when_some(self.accessibility_label, |this, label| {
-                this.accessibility_label(label)
-            })
+            .accessibility_label(
+                self.accessibility_label
+                    .unwrap_or_else(|| t!("Copy").into()),
+            )
             .when(!copied, |this| {
                 this.on_click({
                     let state = state.clone();

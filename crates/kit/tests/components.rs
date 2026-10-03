@@ -115,7 +115,7 @@ impl Render for NamedClipboard {
 }
 
 #[gpui::test]
-fn clipboard_reports_accessibility_name_on_its_icon_button(cx: &mut TestAppContext) {
+fn clipboard_reports_default_and_explicit_accessibility_names(cx: &mut TestAppContext) {
     cx.update(gpui_component::init);
     let (handle, _) = common::open_window(cx, None, |_, cx| cx.new(|_| NamedClipboard));
     cx.update_window(handle.into(), |_, window, cx| {
@@ -123,8 +123,8 @@ fn clipboard_reports_accessibility_name_on_its_icon_button(cx: &mut TestAppConte
         assert_eq!(window.find("copy-key").label(), Some("Copy API key"));
         assert_eq!(
             window.find("copy-plain").label(),
-            None,
-            "a tooltip is a hint, not a name"
+            Some("Copy"),
+            "an icon-only Clipboard needs a name without a caller-provided label"
         );
     })
     .unwrap();
